@@ -1,12 +1,16 @@
 class CalorieTracker {
   constructor() {
-    this._calorieLimit = 1000;
+    this._calorieLimit = 2000;
     this._totalCalories = 0;
     this._meals = [];
     this._workouts = [];
 
     this._displayCaloriesLimit();
     this._displayCaloriesTotal();
+    this._displayCaloriesConsumed();
+    this._displayCaloriesBurned();
+    this._displayCaloriesRemaining();
+    this._displayCaloriesProgress();
   }
 
   // Public methods/API
@@ -50,9 +54,29 @@ class CalorieTracker {
   }
 
   _displayCaloriesRemaining() {
-    document.getElementById('calories-remaining').innerHTML =
-      document.getElementById('calories-consumed').innerHTML -
-      document.getElementById('calories-burned').innerHTML;
+    const caloriesRemainingEl = document.getElementById('calories-remaining');
+    const progressEl = document.getElementById('calorie-progress');
+
+    const remaining = this._calorieLimit - this._totalCalories;
+    caloriesRemainingEl.innerHTML = remaining;
+
+    if (remaining <= 0) {
+      caloriesRemainingEl.parentElement.parentElement.classList.toggle(
+        'bg-light'
+      );
+      caloriesRemainingEl.parentElement.parentElement.classList.toggle(
+        'bg-danger'
+      );
+      progressEl.classList.toggle('bg-success');
+      progressEl.classList.toggle('bg-danger');
+    }
+  }
+
+  _displayCaloriesProgress() {
+    const progressEl = document.getElementById('calorie-progress');
+    const percentage = (this._totalCalories / this._calorieLimit) * 100;
+    const width = Math.min(percentage, 100);
+    progressEl.style.width = `${width}%`;
   }
 
   _renderStats() {
@@ -60,6 +84,7 @@ class CalorieTracker {
     this._displayCaloriesConsumed();
     this._displayCaloriesBurned();
     this._displayCaloriesRemaining();
+    this._displayCaloriesProgress();
   }
 }
 
@@ -80,10 +105,15 @@ class Workout {
 
 const tracker = new CalorieTracker();
 
-const breakfast = new Meal('Breakfast', 450);
+const breakfast = new Meal('Breakfast', 1500);
+const lunch = new Meal('Lunch', 500);
 tracker.addMeal(breakfast);
-tracker.addMeal(breakfast);
+tracker.addMeal(lunch);
 
 const run = new Workout('Morning Run', 700);
-tracker.addWorkout(run);
-tracker.addWorkout(run);
+const swim = new Workout('Swim', 300);
+// tracker.addWorkout(run);
+// tracker.addWorkout(swim);
+
+// console.log(tracker._meals);
+// console.log(tracker._workouts);
