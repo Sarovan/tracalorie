@@ -29,6 +29,14 @@ class CalorieTracker {
     this._renderStats();
   }
 
+  removeMeal() {
+    console.log('meal removed');
+  }
+
+  removeWorkout() {
+    console.log('workout removed');
+  }
+
   // Private methods
 
   _displayCaloriesLimit() {
@@ -94,9 +102,9 @@ class CalorieTracker {
     const mealItems = document.getElementById('meal-items');
 
     const div = document.createElement('div');
+    div.classList.add('card', 'my-2');
     div.setAttribute('data-id', meal.id);
-    div.innerHTML = `<div class="card my-2">
-              <div class="card-body">
+    div.innerHTML = `<div class="card-body">
                 <div class="d-flex align-items-center justify-content-between">
                   <h4 class="mx-1">${meal.name}</h4>
                   <div
@@ -117,9 +125,9 @@ class CalorieTracker {
     const workoutItems = document.getElementById('workout-items');
 
     const div = document.createElement('div');
+    div.classList.add('card', 'my-2');
     div.setAttribute('data-id', workout.id);
-    div.innerHTML = `<div class="card my-2">
-              <div class="card-body">
+    div.innerHTML = `<div class="card-body">
                 <div class="d-flex align-items-center justify-content-between">
                   <h4 class="mx-1">${workout.name}</h4>
                   <div
@@ -171,6 +179,14 @@ class App {
     document
       .getElementById('workout-form')
       .addEventListener('submit', this._newItem.bind(this));
+
+    document
+      .getElementById('meal-items')
+      .addEventListener('click', this._removeItem.bind(this, 'meal'));
+
+    document
+      .getElementById('workout-items')
+      .addEventListener('click', this._removeItem.bind(this, 'workout'));
   }
 
   _newItem(e) {
@@ -207,6 +223,27 @@ class App {
       toggle: true,
     });
   }
+
+  _removeItem(type, e) {
+    if (
+      e.target.classList.contains('delete') ||
+      e.target.classList.contains('fa-xmark')
+    ) {
+      if (confirm('Are you sure?')) {
+        const id = e.target.closest('.card').getAttribute('data-id');
+
+        type === 'meal'
+          ? this._tracker.removeMeal(id)
+          : this._tracker.removeWorkout(id);
+        // e.target.closest('.card').remove();
+      }
+    }
+  }
 }
 
 const app = new App();
+
+const meal = new Meal('Lunch', 123);
+app._tracker.addMeal(meal);
+const workout = new Workout('Swim', 500);
+app._tracker.addWorkout(workout);
